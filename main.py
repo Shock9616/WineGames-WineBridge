@@ -3,6 +3,7 @@ import psutil
 from pypresence import Presence
 import time
 import re
+import signal
 
 # === CONFIG ===
 CONFIG_PATH = "config.json"
@@ -20,6 +21,14 @@ OVERRIDES = { key.lower(): value for key, value in cfg.get("overrides", {}).item
 rpc = Presence(DISCORD_CLIENT_ID)
 rpc.connect()
 print(f"Connected to Discord RPC (Client ID: {DISCORD_CLIENT_ID})")
+
+# Handle termination signals to clear Discord presence
+def _clear_and_exit(signum, frame):
+    rpc.clear()
+    sys.exit(0)
+
+signal.signal(signal.SIGTERM, _clear_and_exit)
+signal.signal(signal.SIGINT, _clear_and_exit)
 
 def clean_name(path: str) -> str:
     """
