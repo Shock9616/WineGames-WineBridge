@@ -1,0 +1,34 @@
+{
+  "blacklist": [
+    "andale32",
+    "bridge",
+    "conhost",
+    "cxcplinfo",
+    "cxmanip",
+    "explorer",
+    "gldriverquery64",
+    "plugplay",
+    "rpcss",
+    "services",
+    "steam",
+    "steamerrorreporter",
+    "steamerrorreporter64",
+    "steamsysinfo",
+    "steamwebhelper",
+    "svchost",
+    "unitycrashhandler64",
+    "vulkandriverquery",
+    "vulkandriverquery64",
+    "wine",
+    "wineboot",
+    "winedevice",
+    "winewrapper"
+  ],
+  "overrides": {
+    "d2": "Diablo II",
+    "hl2": "Half Life 2",
+    "precinct": "The Precinct",
+    "BBQ": "The First Berserker Khazan",
+    "etg": "Enter the Gungeon"
+  }
+}
