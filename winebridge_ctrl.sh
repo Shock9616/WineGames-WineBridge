@@ -9,6 +9,7 @@ PIDFILE="$RESOURCES/scanner.pid"
 if [ $# -eq 0 ]; then
   echo "Start"
   echo "Stop"
+  echo "Show Config File"
   exit 0
 fi
 
@@ -27,5 +28,8 @@ case "$1" in
       kill "$(cat "$PIDFILE")" 2>/dev/null
       rm "$PIDFILE"
     fi
+    ;;
+  "Show Config File")
+    open "$RESOURCES"
     ;;
 esac
