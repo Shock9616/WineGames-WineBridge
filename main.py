@@ -1,9 +1,11 @@
 import json
 import psutil
-from pypresence import Presence
-import time
 import re
 import signal
+import sys
+import time
+
+from pypresence import Presence
 
 # === CONFIG ===
 CONFIG_PATH = "config.json"
@@ -15,20 +17,23 @@ with open(CONFIG_PATH) as f:
     cfg = json.load(f)
 BLACKLIST = set(cfg["blacklist"])
 # Normalize override keys to lowercase for case-insensitive matching
-OVERRIDES = { key.lower(): value for key, value in cfg.get("overrides", {}).items() }
+OVERRIDES = {key.lower(): value for key, value in cfg.get("overrides", {}).items()}
 
 # === CONNECT TO DISCORD ===
 rpc = Presence(DISCORD_CLIENT_ID)
 rpc.connect()
 print(f"Connected to Discord RPC (Client ID: {DISCORD_CLIENT_ID})")
 
+
 # Handle termination signals to clear Discord presence
 def _clear_and_exit(signum, frame):
     rpc.clear()
     sys.exit(0)
 
+
 signal.signal(signal.SIGTERM, _clear_and_exit)
 signal.signal(signal.SIGINT, _clear_and_exit)
+
 
 def clean_name(path: str) -> str:
     """
@@ -47,11 +52,11 @@ def clean_name(path: str) -> str:
     if not filename_lower.endswith(".exe"):
         return ""
     # Strip the .exe suffix
-    base_orig = filename[:-4]       # original case
+    base_orig = filename[:-4]  # original case
     base_lower = filename_lower[:-4]  # lowercase for checks
     # Remove Unreal Engine build suffixes like "-Win64-Shipping"
-    base_lower = re.sub(r'-(win(?:32|64)-shipping)$', '', base_lower)
-    base_orig = re.sub(r'-(Win(?:32|64)-Shipping)$', '', base_orig)
+    base_lower = re.sub(r"-(win(?:32|64)-shipping)$", "", base_lower)
+    base_orig = re.sub(r"-(Win(?:32|64)-Shipping)$", "", base_orig)
     # Blacklist check
     if base_lower in BLACKLIST:
         return ""
@@ -59,8 +64,9 @@ def clean_name(path: str) -> str:
     if base_lower in OVERRIDES:
         return OVERRIDES[base_lower]
     # Auto-split CamelCase (e.g., "TheMessenger" -> "The Messenger")
-    split_name = re.sub(r'(?<!^)(?=[A-Z])', ' ', base_orig)
+    split_name = re.sub(r"(?<!^)(?=[A-Z])", " ", base_orig)
     return split_name
+
 
 def scan_for_game() -> str:
     for proc in psutil.process_iter(["exe", "cmdline"]):
@@ -83,6 +89,7 @@ def scan_for_game() -> str:
 
     return ""
 
+
 def main():
     print("Starting main loop...")
     last = None
@@ -97,6 +104,7 @@ def main():
                 print("→ No game detected, clearing presence")
                 rpc.clear()
         time.sleep(SCAN_INTERVAL)
+
 
 if __name__ == "__main__":
     main()
