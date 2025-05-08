@@ -1,6 +1,4 @@
 import json
-from types import FrameType
-from typing import TypedDict, cast
 import psutil
 import re
 import signal
@@ -8,6 +6,8 @@ import sys
 import time
 
 from pypresence import Presence
+from types import FrameType
+from typing import TypedDict, cast
 
 
 class Config(TypedDict):
@@ -19,8 +19,6 @@ class Config(TypedDict):
 CONFIG_PATH = "config.json"
 SCAN_INTERVAL = 5  # seconds
 DISCORD_CLIENT_ID = "1365600859387592704"
-
-test = {"blacklist": ["andale32"], "overrides": {"d2": "Diablo II"}}
 
 # === LOAD CONFIG ===
 with open(CONFIG_PATH) as f:
