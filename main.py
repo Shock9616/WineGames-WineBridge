@@ -6,6 +6,14 @@ import sys
 import time
 
 from pypresence import Presence
+from types import FrameType
+from typing import TypedDict, cast
+
+
+class Config(TypedDict):
+    blacklist: list[str]
+    overrides: dict[str, str]
+
 
 # === CONFIG ===
 CONFIG_PATH = "config.json"
@@ -14,8 +22,10 @@ DISCORD_CLIENT_ID = "1365600859387592704"
 
 # === LOAD CONFIG ===
 with open(CONFIG_PATH) as f:
-    cfg = json.load(f)
+    cfg = cast(Config, json.load(f))
+
 BLACKLIST = set(cfg["blacklist"])
+
 # Normalize override keys to lowercase for case-insensitive matching
 OVERRIDES = {key.lower(): value for key, value in cfg.get("overrides", {}).items()}
 
@@ -26,13 +36,13 @@ print(f"Connected to Discord RPC (Client ID: {DISCORD_CLIENT_ID})")
 
 
 # Handle termination signals to clear Discord presence
-def _clear_and_exit(signum, frame):
+def _clear_and_exit(_signum: int, _frame: FrameType | None):
     rpc.clear()
     sys.exit(0)
 
 
-signal.signal(signal.SIGTERM, _clear_and_exit)
-signal.signal(signal.SIGINT, _clear_and_exit)
+_ = signal.signal(signal.SIGTERM, _clear_and_exit)
+_ = signal.signal(signal.SIGINT, _clear_and_exit)
 
 
 def clean_name(path: str) -> str:
@@ -72,7 +82,7 @@ def scan_for_game() -> str:
     for proc in psutil.process_iter(["exe", "cmdline"]):
         try:
             exe_path = proc.info.get("exe") or ""
-            cmdline = proc.info.get("cmdline") or []
+            cmdline: list[str] = proc.info.get("cmdline") or []
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
 
